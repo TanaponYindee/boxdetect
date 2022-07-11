@@ -158,9 +158,9 @@ def get_boxes(img, cfg: config.PipelinesConfig, plot=False):
 
     # process image using range of scaling factors
     cnts_list = []
-    print(scaling_factors)
+    # print(scaling_factors)
     for scaling_factor in scaling_factors:
-        print("scaling_factor:",scaling_factor)
+        # print("scaling_factor:",scaling_factor)
         # resize the image for processing time
         image_scaled = image_org.copy()
         image_scaled = imutils.resize(
@@ -180,9 +180,9 @@ def get_boxes(img, cfg: config.PipelinesConfig, plot=False):
         # apply tresholding to get all the pixel values to either 0 or 255
         # this function also inverts colors
         # (black pixels will become the background)
-        cv2.imwrite(f'{os.getcwd()}/output/test_check_box/apply_thresholding1.jpg',image_scaled)
+        # cv2.imwrite(f'{os.getcwd()}/output/test_check_box/apply_thresholding1.jpg',image_scaled)
         image_scaled = img_proc.apply_thresholding(image_scaled, plot)
-        cv2.imwrite(f'{os.getcwd()}/output/test_check_box/apply_thresholding2.jpg',image_scaled)
+        # cv2.imwrite(f'{os.getcwd()}/output/test_check_box/apply_thresholding2.jpg',image_scaled)
 
         n_count_loop = 0
         for (
@@ -193,13 +193,13 @@ def get_boxes(img, cfg: config.PipelinesConfig, plot=False):
             morph_kernels_type,
             morph_kernels_thickness
         ) in cfg.variables_as_iterators():
-            print('-'*20)
-            print("width_range:",width_range, "height_range:",height_range, "wh_ratio_range:",wh_ratio_range)
-            print("dilation_iterations:",dilation_iterations)
-            print("dilation_kernel:",dilation_kernel, "vertical_max_distance:",vertical_max_distance)
-            print("horizontal_max_distance:",horizontal_max_distance)
-            print("morph_kernels_type:",morph_kernels_type)
-            print("morph_kernels_thickness:",morph_kernels_thickness)
+            # print('-'*20)
+            # print("width_range:",width_range, "height_range:",height_range, "wh_ratio_range:",wh_ratio_range)
+            # print("dilation_iterations:",dilation_iterations)
+            # print("dilation_kernel:",dilation_kernel, "vertical_max_distance:",vertical_max_distance)
+            # print("horizontal_max_distance:",horizontal_max_distance)
+            # print("morph_kernels_type:",morph_kernels_type)
+            # print("morph_kernels_thickness:",morph_kernels_thickness)
             image = image_scaled.copy()
 
             min_w = int(width_range[0] * resize_ratio_inv)
@@ -215,10 +215,10 @@ def get_boxes(img, cfg: config.PipelinesConfig, plot=False):
             # basic pixel inflation
             kernel = cv2.getStructuringElement(
                 cv2.MORPH_RECT, dilation_kernel)
-            print("kernel:",kernel)
+            # print("kernel:",kernel)
             image = cv2.dilate(
                 image, kernel, iterations=dilation_iterations)
-            cv2.imwrite(f'{os.getcwd()}/output/test_check_box/dilate_{n_count_loop}.jpg',image)
+            # cv2.imwrite(f'{os.getcwd()}/output/test_check_box/dilate_{n_count_loop}.jpg',image)
             if plot:  # pragma: no cover
                 cv2.imshow("dilated", image)
                 cv2.waitKey(0)
@@ -239,34 +239,34 @@ def get_boxes(img, cfg: config.PipelinesConfig, plot=False):
 
             image = img_proc.apply_merge_transformations(
                 image, kernels, plot=plot)
-            cv2.imwrite(f'{os.getcwd()}/output/test_check_box/apply_merge_transformations_{n_count_loop}.jpg',image)
-            print('='*10)
+            # cv2.imwrite(f'{os.getcwd()}/output/test_check_box/apply_merge_transformations_{n_count_loop}.jpg',image)
+            # print('='*10)
             # find contours in the thresholded image
             cnts = rect_proc.get_contours(image)
-            print("cnts get_contours:",len(cnts),np.array(cnts).shape)
+            # print("cnts get_contours:",len(cnts),np.array(cnts).shape)
 
             # filter countours based on area size
             cnts = rect_proc.filter_contours_by_area_size(cnts, area_range)
-            print("cnts filter_contours_by_area_size:",len(cnts),np.array(cnts).shape)
+            # print("cnts filter_contours_by_area_size:",len(cnts),np.array(cnts).shape)
 
             # rescale countours to original image size
             cnts = rect_proc.rescale_contours(cnts, resize_ratio)
-            print("cnts rescale_contours:",len(cnts),np.array(cnts).shape)
+            # print("cnts rescale_contours:",len(cnts),np.array(cnts).shape)
 
             cnts = rect_proc.filter_contours_by_size_range(
                 cnts, width_range, height_range)
-            print("cnts filter_contours_by_size_range:",len(cnts),np.array(cnts).shape)
+            # print("cnts filter_contours_by_size_range:",len(cnts),np.array(cnts).shape)
 
             # filter global countours by rectangle WxH ratio
             cnts = rect_proc.filter_contours_by_wh_ratio(
                 cnts, wh_ratio_range)
-            print("cnts filter_contours_by_wh_ratio:",len(cnts),np.array(cnts).shape)
+            # print("cnts filter_contours_by_wh_ratio:",len(cnts),np.array(cnts).shape)
             # add countours detected with current scaling factor run
             # to the global collection
             cnts_list += cnts
             n_count_loop += 1
-            print('-'*20)
-    print("cnts_list:",len(cnts_list))
+    #         print('-'*20)
+    # print("cnts_list:",len(cnts_list))
     # rects = [rect_proc.get_bounding_rect(c)[:4] for c in cnts]
     # merge rectangles into group if overlapping
     rects = rect_proc.group_countours(cnts_list,epsilon=0.1)

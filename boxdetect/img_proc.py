@@ -61,12 +61,14 @@ def apply_thresholding(image, plot=False):
             Resulting image
     """ # NOQA E501
 
-    otsu = cv2.threshold(
-        image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
-    binary = cv2.threshold(
-        image, np.mean(image), 255, cv2.THRESH_BINARY_INV)[1]
+    # otsu = cv2.threshold(
+    #     image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    # binary = cv2.threshold(
+    #     image, np.mean(image), 255, cv2.THRESH_BINARY_INV)[1]
 
-    image = otsu + binary
+    # image = otsu + binary
+
+    image = cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
 
     if plot:  # pragma: no cover
         cv2.imshow("thresholded image", image)
